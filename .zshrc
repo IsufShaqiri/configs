@@ -1,44 +1,74 @@
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
-eval "$(starship init zsh)"
+# Set the directory we want to store zinit and plugins
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+# Download Zinit, if not installed
+if [ ! -d "$ZINIT_HOME" ]; then
+  mkdir -p "$(dirname $ZINIT_HOME)"
+  git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
 
-# Enable colors and change prompt:
-autoload -U colors && colors
-source ~/.zshenv
+# Source/Load zinit
+source "${ZINIT_HOME}/zinit.zsh"
 
-# History in cache directory:
-HISTSIZE=1000
-SAVEHIST=1000
-HISTFILE=~/.cache/zsh/history
+# Add in Powerlevel10k
+zinit ice depth=1; zinit light romkatv/powerlevel10k
 
-setopt auto_pushd
-autoload -U compinit && compinit -u
-zstyle ':completion:*' menu select
-# Auto complete with case insenstivity
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+# Add zsh plugins
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions 
+zinit light zsh-users/zsh-autosuggestions 
+zinit light Aloxaf/fzf-tab
 
-zmodload zsh/complist
-compinit
-_comp_options+=(globdots)		# Include hidden files.
+# Add in oh-my-zsh snippets
+zinit snippet OMZP::git
+zinit snippet OMZP::archlinux
+zinit snippet OMZP::sudo
 
-# vi mode
-bindkey -v
-export KEYTIMEOUT=1
+# Load completions
+autoload -U compinit && compinit
+zinit cdreplay -q
 
-# Enable searching through history
-bindkey '^R' history-incremental-pattern-search-backward
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# Edit line in vim buffer ctrl-v
-autoload edit-command-line; zle -N edit-command-line
-bindkey '^v' edit-command-line
-# Enter vim buffer from normal mode
-autoload -U edit-command-line && zle -N edit-command-line && bindkey -M vicmd "^v" edit-command-line
+# Emacs keybind
+bindkey -e
 
-# Use vim keys in tab complete menu:
+#youtube download
+alias yta-aac="yt-dlp --add-metadata -i --extract-audio --audio-format aac "
+alias yta-best="yt-dlp --add-metadata -i --extract-audio --audio-format best "
+alias yta-flac="yt-dlp --add-metadata -i --extract-audio --audio-format flac "
+alias yta-mp3="yt-dlp --add-metadata -i --extract-audio --audio-format mp3 "
+alias ytv-best="yt-dlp --add-metadata -i -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' --merge-output-format mp4 "
+alias ytaudio="yt-dlp -f 'ba' -x --no-playlist --embed-metadata"
+alias ytplaylist="yt-dlp -f 'ba' -x --embed-metadata"
+
+alias ls="eza --color=auto --group-directories-first"
+alias la='eza --color=auto -lahFg --group-directories-first'
+alias ll='eza --color=auto -lhFg --group-directories-first'
+alias l='eza --color=auto --group-directories-first'
+alias lt='eza --color=auto -lhFt --group-directories-first'
+alias grep="grep --color=auto"
+alias s="startx"
+alias v="nvim"
+alias sz="source $HOME/.config/zsh/.zshrc"
+alias vi="nvim"
+alias pacman="sudo pacman"
+alias SS="sudo systemctl"
+alias ssn="sudo shutdown -h now"
+alias sbn="sudo reboot -h now"
+alias sfz="source $HOME/.zshrc"
+alias tobash="chsh -s /bin/bash; echo 'Shell changed, now log out.'"
+alias tozsh="chsh -s /bin/zsh; echo 'Shell changed, now log out.'"
+
+## Use vim keys in tab complete menu:
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect 'k' vi-up-line-or-history
@@ -47,57 +77,25 @@ bindkey -M menuselect 'left' vi-backward-char
 bindkey -M menuselect 'down' vi-down-line-or-history
 bindkey -M menuselect 'up' vi-up-line-or-history
 bindkey -M menuselect 'right' vi-forward-char
-# Fix backspace bug when switching modes
-bindkey "^?" backward-delete-char
 
-# Change cursor shape for different vi modes.
-function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne '\e[1 q'
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
-  fi
-}
-zle -N zle-keymap-select
+# History configs
+HISTSIZE=5000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
 
-# ci", ci', ci`, di", etc
-autoload -U select-quoted
-zle -N select-quoted
-for m in visual viopp; do
-  for c in {a,i}{\',\",\`}; do
-    bindkey -M $m $c select-quoted
-  done
-done
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Aa-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath' 
 
-# ci{, ci(, ci<, di{, etc
-autoload -U select-bracketed
-zle -N select-bracketed
-for m in visual viopp; do
-  for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
-    bindkey -M $m $c select-bracketed
-  done
-done
-
-zle-line-init() {
-    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    echo -ne "\e[5 q"
-}
-zle -N zle-line-init
-
-echo -ne '\e[5 q' # Use beam shape cursor on startup.
-precmd() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
-
-alias ls="exa --group-directories-first --color=auto"
-alias la="exa --group-directories-first --color=auto -lagh"
-alias grep="grep --color=auto"
-
-source /usr/share/zsh/plugins/zsh-completions/zsh-completions.plugin.zsh  2>/dev/null
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh  2>/dev/null
-source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh  2>/dev/null
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh  2>/dev/null
-
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Integrate fzf in zsh
+eval "$(fzf --zsh)"

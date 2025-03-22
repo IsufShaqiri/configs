@@ -1,6 +1,23 @@
-# Other XDG paths
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH=$HOME/.local/bin:$PATH
+# paths
+export GOPATH=$HOME/.go
+export XDG_DATA_HOME=${XDG_DATA_HOME:="$HOME/.local/share"}
+export XDG_CACHE_HOME=${XDG_CACHE_HOME:="$HOME/.cache"}
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:="$HOME/.config"}
+export PATH=$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/home/trix/.go/bin:$PATH
+
+# default apps
+export EDITOR="nvim"
+export READER="zathura"
+export VISUAL="nvim"
+export TERMINAL="ghostty"
+export BROWSER="zen-browser"
+export VIDEO="mpv"
+export IMAGE="sxiv"
+export OPENER="xdg-open"
 
 export LF_ICONS="\
 di=:\
@@ -163,4 +180,3 @@ ex=:\
 *.pdf=:\
 *.nix=:\
 "
-. "$HOME/.cargo/env"
