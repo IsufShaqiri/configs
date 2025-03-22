@@ -35,6 +35,9 @@ zinit snippet OMZP::sudo
 autoload -U compinit && compinit
 zinit cdreplay -q
 
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
