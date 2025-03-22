@@ -1,6 +1,7 @@
-theme = rose-pine
-font-family = Iosevka Nerd Font
-window-padding-x = 3
-gtk-titlebar = false
+font-family = Maple Mono NF
+font-size = 11
+theme = catppuccin-mocha
 background-opacity = 0.9
-background-blur = 20
+background-blur = 10
+window-padding-x = 2,4
+window-padding-y = 2,4
