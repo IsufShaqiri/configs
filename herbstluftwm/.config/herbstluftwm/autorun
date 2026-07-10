@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+picom -b &
+dunst &
+feh ~/.fehbg
+setxkbmap -option caps:super

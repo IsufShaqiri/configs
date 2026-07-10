@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+hc unrule -F
+#hc rule class=XTerm tag=3 # move all xterms to tag 3
+hc rule class="Firefox" tag=3 focus=on
+hc rule class="qutebrowser" tag=3 focus=on
+hc rule class="Pcmanfm" tag=8 focus=on
+hc rule title~'launch.sh' floating=on floatplacement=center floating_geometry=500x600
+hc rule title~'configs.sh' floating=on floatplacement=center floating_geometry=500x700
+hc rule focus=on # normally focus new clients
+hc rule floatplacement=center
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on floatplacement=center
+hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on floatplacement=smart
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
+
+hc set tree_style '╾│ ├└╼─┐'
+hc unlock

@@ -1,0 +1,45 @@
+#! /bin/sh
+
+
+# Workspace names
+bspc monitor -d I II III IV V VI
+
+# Auto starting apps
+. ~/.config/bspwm/autostart.sh
+
+# Window config
+bspc config border_width         2
+bspc config single_monocle		 false
+bspc config focus_by_distance	 true
+bspc config history_aware_focus	 true
+bspc config pointer_modifier	 mod4
+bspc config pointer_action1		 move
+bspc config pointer_action2		 resize_side
+bspc config pointer_action3		 resize_corner
+bspc config window_gap           3
+bspc config split_ratio          0.50
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+bspc config focus_follows_pointer true
+bspc config top_padding 35
+bspc config right_padding 5
+bspc config bottom_padding 8
+bspc config left_padding 5
+
+# For removing the default x pointer
+xsetroot -cursor_name left_ptr
+
+# Colors
+bspc config normal_border_color "#4c566a"
+bspc config active_border_color "#1e1e1e"
+bspc config focused_border_color "#5e81ac"
+bspc config presel_feedback_color "#dd2727"
+
+# Bspwm rules for windows and applications
+bspc rule -a polybar state=sticky
+bspc rule -a Gimp desktop='^8' state=floating follow=on
+bspc rule -a Brave-browser desktop='^2' follow=on state=tiled follow=on
+bspc rule -a Emacs desktop='^5' state=tiled
+bspc rule -a mplayer2 state=floating
+bspc rule -a Kupfer.py focus=on
+bspc rule -a Screenkey manage=off
